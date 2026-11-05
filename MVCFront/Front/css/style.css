@@ -1,0 +1,21 @@
+body {
+    background-color: #f8f9fa;
+}
+
+#inicio {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+}
+
+#catalogo {
+    min-height: 300px;
+}
+
+.producto-card {
+    transition: transform 0.2s;
+}   
+
+.producto-card:hover {
+    transform: translateY(-4px);
+}
