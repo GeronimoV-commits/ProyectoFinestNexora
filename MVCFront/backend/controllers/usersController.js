@@ -55,8 +55,8 @@ const crearUsuario = async (req, res) => {
     try {
         const { nombre, apellido, contacto, email, password, tipo_usuario } = req.body;
 
-        if (!nombre || !apellido || !contacto || !email || !password) {
-            return res.status(400).json({ error: 'Nombre, Apellido, Contacto, Email y Password son campos obligatorios' });
+        if (!nombre || !apellido || !email || !password) {
+            return res.status(400).json({ error: 'Nombre, Apellido, Email y Password son campos obligatorios' });
         }
 
         const usuarioExistente = await usersModel.obtenerUsuarioPorEmail(email);
@@ -66,7 +66,16 @@ const crearUsuario = async (req, res) => {
 
         const imagen = req.file ? req.file.filename : null;
         const passwordHash = await bcrypt.hash(password, 10);
-        const id = await usersModel.crearUsuario(nombre, apellido, contacto, email, passwordHash, imagen, tipo_usuario, 1);
+        const id = await usersModel.crearUsuario(
+            nombre,
+            apellido,
+            contacto || null,
+            email,
+            passwordHash,
+            imagen,
+            tipo_usuario,
+            1
+        );
 
         return res.status(201).json({ message: 'Usuario creado exitosamente', id });
     }
