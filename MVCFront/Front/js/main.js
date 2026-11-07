@@ -1,4 +1,4 @@
-const URL_API = "http://localhost:8080/api/productos";
+const URL_API = "http://localhost:3000";
 const contenedorProductos = document.getElementById("lista-productos");
 const mensajeCatalogo = document.getElementById("mensaje-catalogo");
 
@@ -46,7 +46,7 @@ botonCerrarSesion.addEventListener(
 
 async function obtenerCategorias() {
     const respuesta = await fetch(
-        "http://localhost:3000/categorias"
+        `${URL_API}/categorias`
     );
     if (!respuesta.ok) {
         throw new Error(
@@ -60,7 +60,7 @@ async function obtenerCategorias() {
 
 async function obtenerProductos() {
     const respuesta = await fetch(
-        "http://localhost:3000/productos"
+        `${URL_API}/productos`
     );
     if (!respuesta.ok) {
         throw new Error(
@@ -73,7 +73,7 @@ async function obtenerProductos() {
 function obtenerNombreCategoria(idCategoria, categorias) {
     const categoria = categorias.find(
         function (categoria) {
-            return categoria.id === idCategoria;
+            return categoria.id === Number(idCategoria);
         }
     );
     if (categoria) {
@@ -86,7 +86,10 @@ function obtenerNombreCategoria(idCategoria, categorias) {
 
 function crearTarjetaProducto(producto, categorias) {
 
-    const nombreCategoria = obtenerNombreCategoria(producto.id_categoria, categorias);
+    const nombreCategoria = obtenerNombreCategoria(producto.categoria, categorias);
+    const imagen = producto.imagen
+        ? `${URL_API}/uploads/${encodeURIComponent(producto.imagen)}`
+        : `https://placehold.co/600x400?text=${encodeURIComponent(producto.nombre)}`;
 
     const columna = document.createElement('div');
     columna.className = "col-12 col-sm-6 col-lg-4";
@@ -94,8 +97,8 @@ function crearTarjetaProducto(producto, categorias) {
     columna.innerHTML = `
                 <div class="card h-100 producto-card">
 
-                    <img src="${producto.imagen || "https://placehold.co/600x400?text=Sin+imagen"}" 
-                    "class="card-img-top imagen-producto"
+                    <img src="${imagen}"
+                    class="card-img-top imagen-producto"
                     alt="${producto.nombre}">
 
                     <div class="card-body d-flex flex-column">
@@ -114,8 +117,10 @@ function crearTarjetaProducto(producto, categorias) {
 
 function mostrarProductos(productos, categorias) {
     contenedorProductos.replaceChildren();
-    contenedorProductos.innerHTML = "";
     productos.forEach(producto => {
+        if (producto.descripcion === null || producto.descripcion.trim() === "") {
+            producto.descripcion = "Sin descripción";
+        }   
         const tarjeta = crearTarjetaProducto(producto, categorias);
         contenedorProductos.append(tarjeta);
     });
@@ -145,6 +150,4 @@ async function cargarCatalogo() {
 
 }
 
-
 cargarCatalogo();
-
