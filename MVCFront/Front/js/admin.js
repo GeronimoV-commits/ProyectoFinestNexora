@@ -10,6 +10,9 @@ const formCategoria = document.getElementById("form-categoria");
 const botonNuevoProducto = document.getElementById("boton-nuevo-producto");
 const formProducto = document.getElementById("form-producto");
 const selectCategoria = document.getElementById("categoria-producto");
+const botonGuardarCategoria = formCategoria.querySelector('button[type="submit"]');
+let categoriaEnEdicion = null;
+let categoriasCargadas = [];
 
 if (!token || rol !== "admin") {
     window.location.href = "index.html";
@@ -18,9 +21,10 @@ if (!token || rol !== "admin") {
 botonNuevaCategoria.addEventListener(
     "click",
     function () {
-        formCategoria.classList.toggle(
-            "d-none"
-        );
+        formCategoria.reset();
+        categoriaEnEdicion = null;
+        botonGuardarCategoria.textContent = "Guardar categoría";
+        formCategoria.classList.toggle("d-none");
     }
 );
 
@@ -41,10 +45,18 @@ formCategoria.addEventListener(
         evento.preventDefault();
         const nombre = document.getElementById("nombre-categoria").value;
         const descripcion = document.getElementById("descripcion-categoria").value;
+        const editando = categoriaEnEdicion !== null;
+        let urlCategoria = `${URL_API}/categorias`;
+        let metodoCategoria = "POST";
+        if (editando) {
+            urlCategoria = `${URL_API}/categorias/${categoriaEnEdicion}`;
+            metodoCategoria = "PUT";
+        }
+
         const respuesta = await fetch(
-            "http://localhost:3000/categorias",
+            urlCategoria,
             {
-                method: "POST",
+                method: metodoCategoria,
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -54,15 +66,26 @@ formCategoria.addEventListener(
         );
         const datos = await respuesta.json();
         if (!respuesta.ok) {
-            alert(
-                datos.message ||
-                "No se pudo crear la categoría."
-            );
+            let mensajeError = datos.error || datos.message;
+            if (!mensajeError) {
+                if (editando) {
+                    mensajeError = "No se pudo actualizar la categoría.";
+                } else {
+                    mensajeError = "No se pudo crear la categoría.";
+                }
+            }
+            alert(mensajeError);
             return;
         }
 
-        alert("Categoría creada correctamente.");
+        if (editando) {
+            alert("Categoría actualizada correctamente.");
+        } else {
+            alert("Categoría creada correctamente.");
+        }
         formCategoria.reset();
+        categoriaEnEdicion = null;
+        botonGuardarCategoria.textContent = "Guardar categoría";
         await cargarPanel();
     });
 
@@ -195,7 +218,7 @@ function mostrarCategorias(categorias) {
                         <td>${categoria.descripcion}</td>
                         <td>${categoria.estado}</td>
                         <td>
-                        <button class="btn btn-warning btn-sm"
+                        <button class="btn btn-warning btn-sm boton-editar-categoria"
                         data-id="${categoria.id}">
                         Editar
                         </button>
@@ -208,6 +231,32 @@ function mostrarCategorias(categorias) {
         tablaCategorias.append(fila);
     });
 }
+
+tablaCategorias.addEventListener("click", function (evento) {
+    const botonEditar = evento.target.closest(".boton-editar-categoria");
+    if (!botonEditar) {
+        return;
+    }
+
+    const id = Number(botonEditar.dataset.id);
+    const categoria = categoriasCargadas.find(
+        function (categoriaActual) {
+            return Number(categoriaActual.id) === id;
+        }
+    );
+
+    if (!categoria) {
+        console.error(`No se encontró la categoría con ID ${id}.`);
+        alert("No se pudo cargar la categoría para editar.");
+        return;
+    }
+
+    categoriaEnEdicion = id;
+    document.getElementById("nombre-categoria").value = categoria.nombre;
+    document.getElementById("descripcion-categoria").value = categoria.descripcion || "";
+    botonGuardarCategoria.textContent = "Actualizar categoría";
+    formCategoria.classList.remove("d-none");
+});
 
 function obtenerNombreCategoria(idCategoria, categorias) {
 
@@ -240,6 +289,7 @@ async function cargarPanel() {
     try {
         const categorias = await obtenerCategorias();
         const productos = await obtenerProductos();
+        categoriasCargadas = categorias;
         mostrarProductos(productos, categorias);
         mostrarCategorias(categorias);
         cargarSelectCategorias(categorias);
