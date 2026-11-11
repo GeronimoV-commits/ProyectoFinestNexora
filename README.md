@@ -23,3 +23,10 @@ Necesitás tener instalados **Node.js**, **MySQL** y la extensión **Live Server
 4. La tienda se abrirá en el navegador. Dejá abierta la terminal del backend mientras la uses.
 
 La conexión a MySQL está configurada para `localhost`, usuario `root`, contraseña vacía y base de datos `proyecto2`. Si tu instalación usa otros datos, actualizalos en [`MVCFront/backend/config/database.js`](MVCFront/backend/config/database.js).
+
+## Usuarios de prueba
+
+El script crea estas cuentas para probar el inicio de sesión:
+
+- **Administrador:** `admin@nexora.com` — contraseña: `Admin123!`
+- **Usuario común:** `usuario@nexora.com` — contraseña: `Usuario123!`

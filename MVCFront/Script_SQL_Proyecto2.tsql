@@ -32,3 +32,7 @@ CREATE TABLE usuarios (
     tipo_usuario ENUM('admin', 'user') NOT NULL DEFAULT 'user',
     estado BOOLEAN NOT NULL DEFAULT TRUE
 );
+
+INSERT INTO usuarios (nombre, apellido, email, password, tipo_usuario, estado) VALUES
+    ('Admin', 'Nexora', 'admin@nexora.com', '$2b$10$eAjdDfrOh23KjHv2E0hsYeqak14muqKhVANGFHDjz4yJk6Vc9f.vm', 'admin', TRUE),
+    ('Usuario', 'Demo', 'usuario@nexora.com', '$2b$10$./kF96i5Ce0RgI4ZBp8mhOw8NJzVunbtlvZy9Q/j.UdvWW.PgF0Sm', 'user', TRUE);
