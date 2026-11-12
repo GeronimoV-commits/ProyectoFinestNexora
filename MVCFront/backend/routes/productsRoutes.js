@@ -1,3 +1,4 @@
+// Router, controlador y middlewares necesarios para las operaciones de productos.
 const express = require("express");
 
 const router = express.Router();
@@ -8,21 +9,17 @@ const verificarToken = require("../middlewares/authMiddleware");
 
 const upload = require("../middlewares/subirImagen");
 
-/*
-Esto es igual que en el semestre pasado. Desde el frontend, o desde Postman
-se hacen peticiones con métodos POST, GET, PUT y DELETE. Estas rutas se usan desde
-el app.js y se le asigna /productos para la ruta. Si llega algo que va para 
-/productos, se usan las funciones que en este archivo se asignan a cada método
-
-*/
-
-//obtener todos los productos
+// Lecturas públicas: lista de productos activos o detalle de uno por ID.
 router.get("/", productController.obtenerProductos);
 router.get("/:id", productController.obtenerProductoPorId);
+
+// En POST y PUT, Multer procesa la imagen antes de validar el producto.
+// Luego se verifica la sesión y el rol administrativo antes de modificar la base.
 router.post("/", upload.single("imagen"), validarProducto, verificarToken, verificarAdmin, productController.crearProducto);
 router.put("/:id", upload.single("imagen"), validarProducto, verificarToken, verificarAdmin, productController.actualizarProducto);
+
+// DELETE también requiere una sesión válida de administrador.
 router.delete("/:id", verificarToken, verificarAdmin, productController.eliminarProducto);
 
-//exporto para que app.js sepa que hacer si llega 
-// por ejemplo un GET a /productos 
+// app.js monta este router bajo el prefijo /productos.
 module.exports = router;

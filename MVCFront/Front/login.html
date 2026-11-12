@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <!-- Configuración básica para mostrar correctamente la página en distintos dispositivos. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
@@ -10,6 +11,7 @@
 </head>
 
 <body>
+    <!-- Formulario que login.js envía al endpoint de autenticación. -->
     <main class="container py-5">
         <div class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-4">
@@ -27,11 +29,13 @@
                         Iniciar sesión
                     </button>
                 </form>
+                <!-- login.js escribe aquí los mensajes de error o de sesión. -->
                 <p id="mensaje-login" class="mt-3"></p>
                 <a href="index.html">Volver a la tienda</a>
             </div>
         </div>
     </main>
+    <!-- Código que procesa el inicio de sesión y guarda el token. -->
     <script src="js/login.js"></script>
 </body>
 

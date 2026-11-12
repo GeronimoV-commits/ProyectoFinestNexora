@@ -1,21 +1,26 @@
+/* Color de fondo general para distinguir el contenido de las tarjetas. */
 body {
     background-color: #f8f9fa;
 }
 
+/* Área inicial de bienvenida: centra verticalmente su contenido. */
 #inicio {
     min-height: 300px;
     display: flex;
     align-items: center;
 }
 
+/* Reserva una altura mínima para la sección del catálogo. */
 #catalogo {
     min-height: 300px;
 }
 
+/* Añade una transición suave cuando el cursor pasa sobre una tarjeta. */
 .producto-card {
     transition: transform 0.2s;
 }   
 
+/* Eleva ligeramente la tarjeta al pasar el cursor para señalar interacción. */
 .producto-card:hover {
     transform: translateY(-4px);
 }

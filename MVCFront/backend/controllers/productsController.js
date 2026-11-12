@@ -1,23 +1,18 @@
 const productsModel = require("../models/productsModel");
 
 /*
-Los controllers en la arquitectura MVC solo reciben las
-peticiones y las responden, pero no tocan la base de datos.
-Dejan la parte de interactuar con la base a los models
+En MVC, el controlador coordina HTTP y reglas de la operación.
+El modelo es quien consulta o modifica la base de datos.
 */
 
-//GET productos
+// GET /productos: devuelve todos los productos activos.
 const obtenerProductos = async (req, res) => {
     try {
-        /*Acá el controller se queda esperando a que el
-        model haga lo que tenga que hacer con la base y
-        le devuelva un resultado al controller para responder
-        la peticioón del front o el Postman */
+        // Espera el resultado del modelo y lo convierte en una respuesta JSON.
         const productos = await productsModel.obtenerTodos();
-        //acá se retorna lo que retorna el model
         res.status(200).json(productos);
     } catch (error) {
-        //si lo del try se rompe, capturo y muestro error
+        // Registra el error técnico y devuelve un mensaje general al cliente.
         console.error(error);
         res.status(500).json({
             mensaje: "Error al obtener productos"
@@ -25,27 +20,18 @@ const obtenerProductos = async (req, res) => {
     }
 };
 
-/*Las explicaciones anteriores aplican a todas 
-las funciones del controller */
-
-//GET producto/id
+// GET /productos/:id: valida el ID y devuelve el producto encontrado.
 const obtenerProductoPorId = async (req, res) => {
     try {
-        //saco el id de los parámetros
+        // Los parámetros de la URL llegan como texto; se convierten a número.
         const id = Number(req.params.id);
         if (!Number.isInteger(id)) {
-            //acá compruebo que el id sea entero
-            //sino es entero, me salgo con un error
             return res.status(400).json({
                 mensaje: "El ID debe ser un número entero"
             });
         }
         const producto = await productsModel.obtenerPorId(id);
         if (!producto) {
-            /*me fijo que producto tenga algo después 
-            de llamar al model. Si no hay nada es porque al 
-            filtrar por ese id no encontró nada. Eso significaría
-            que no hay un producto con el id que usa la función*/
             return res.status(404).json({
                 mensaje: "No existe producto con ese ID"
             });
@@ -59,28 +45,19 @@ const obtenerProductoPorId = async (req, res) => {
     }
 };
 
-//POST producto
+// POST /productos: guarda los campos y, si existe, la imagen enviada por Multer.
 const crearProducto = async (req, res) => {
 
     try {
 
+        // Los campos de texto/número llegan en req.body.
         const { nombre, descripcion, precio, stock, categoria } = req.body;
 
+        // Multer agrega req.file cuando se subió una imagen.
         const imagen = req.file
             ? req.file.filename
             : null;
-        console.log("BODY:", req.body);
-        console.log("FILE:", req.file);
-
-        console.log({
-            nombre,
-            descripcion: descripcion ?? null,
-            precio,
-            stock,
-            imagen,
-            categoria,
-        });
-
+        // Normaliza los valores antes de entregarlos al modelo.
         const nuevoProducto = await productsModel.crearProducto({
 
             nombre,
@@ -92,6 +69,7 @@ const crearProducto = async (req, res) => {
 
         });
 
+        // 201 informa que el producto fue creado con éxito.
         res.status(201).json({
 
             mensaje: "Producto creado correctamente",
@@ -100,7 +78,7 @@ const crearProducto = async (req, res) => {
         });
 
     } catch (error) {
-
+        // Los errores inesperados se registran en el servidor.
         console.error(error);
 
         res.status(500).json({
@@ -111,9 +89,10 @@ const crearProducto = async (req, res) => {
 
 };
 
-//PUT producto/id
+// PUT /productos/:id: actualiza los campos de un producto existente.
 const actualizarProducto = async (req, res) => {
     try {
+        // Valida el ID antes de buscar o modificar registros.
         const id = Number(req.params.id);
         const { nombre, descripcion, precio, stock, categoria } = req.body;
         if (!Number.isInteger(id)) {
@@ -122,6 +101,7 @@ const actualizarProducto = async (req, res) => {
             });
         }
 
+        // Se necesita el registro actual para conservar los valores no reemplazados.
         const productoActual = await productsModel.obtenerPorId(id);
         if (!productoActual) {
             return res.status(404).json({
@@ -129,6 +109,7 @@ const actualizarProducto = async (req, res) => {
             });
         }
 
+        // Si no llegó descripción, conserva la ya guardada (o null si no había).
         let descripcionFinal;
         if (descripcion !== undefined && descripcion !== null) {
             descripcionFinal = descripcion;
@@ -138,8 +119,7 @@ const actualizarProducto = async (req, res) => {
             descripcionFinal = null;
         }
 
-        /* En filasModificadas voy a tener el número de
-        filas que se modificaron con esta función del model */
+        // Si no se subió una nueva imagen, conserva la ruta de la anterior.
         await productsModel.actualizarProducto(id, {
             nombre,
             descripcion: descripcionFinal,
@@ -149,6 +129,7 @@ const actualizarProducto = async (req, res) => {
             categoria: categoria ? Number(categoria) : null
         });
 
+        // Vuelve a consultar para responder con el registro actualizado.
         const productoActualizado = await productsModel.obtenerPorId(id);
         return res.status(200).json({
             mensaje: "Producto actualizado correctamente",
@@ -162,17 +143,18 @@ const actualizarProducto = async (req, res) => {
     }
 };
 
-//DELETE /productos/:id
+// DELETE /productos/:id: el modelo realiza una eliminación lógica por estado.
 const eliminarProducto = async (req, res) => {
     try {
+        // Un ID inválido no debe convertirse en una consulta a la base.
         const id = Number(req.params.id);
         if (!Number.isInteger(id)) {
             return res.status(400).json({
                 mensaje: "El ID debe ser un número entero"
             });
         }
+        // El modelo devuelve true/false según si encontró una fila que actualizar.
         const filasEliminadas = await productsModel.eliminar(id);
-        //acá pasa lo mismo que con filasModificadas
         if (filasEliminadas === 0) {
             return res.status(404).json({
                 mensaje: "El producto no fue encontrado"
@@ -190,8 +172,7 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
-//exporto para que el archivo de rutas pueda usar las funciones de acá
-//si no exporto, el archivo de rutas no tiene acceso
+// Las rutas enlazan cada método HTTP con su función correspondiente.
 module.exports = {
     obtenerProductos,
     obtenerProductoPorId,

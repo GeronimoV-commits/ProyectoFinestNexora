@@ -1,6 +1,7 @@
 <html lang="es">
 
 <head>
+    <!-- Metadatos para codificación, adaptación móvil y estilo Bootstrap. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administración</title>
@@ -8,6 +9,7 @@
 </head>
 
 <body>
+    <!-- Contenedor principal de las herramientas administrativas. -->
     <main class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h2">Administración</h1>
@@ -16,6 +18,7 @@
             </a>
         </div>
 
+        <!-- Gestión de productos: el formulario permite crear o editar. -->
         <section class="mb-5">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="h4">Productos</h2>
@@ -23,6 +26,7 @@
                     + Nuevo producto
                 </button>
             </div>
+            <!-- admin.js muestra este formulario y lo completa al editar un producto. -->
             <form id="form-producto" class="border rounded p-3 mb-4 d-none">
                 <div class="mb-3">
                     <label for="nombre-producto" class="form-label">Nombre</label>
@@ -62,6 +66,7 @@
                     Guardar producto
                 </button>
             </form>
+            <!-- Indicador de carga o error que admin.js actualiza. -->
             <p id="mensaje-productos">Cargando productos...</p>
             <div class="table-responsive">
                 <table class="table table-striped align-middle">
@@ -74,11 +79,13 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
+                    <!-- admin.js inserta aquí una fila por producto y sus acciones. -->
                     <tbody id="tabla-productos"></tbody>
                 </table>
             </div>
         </section>
 
+        <!-- Gestión de categorías que también alimenta el selector de productos. -->
         <section>
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="h4">Categorías</h2>
@@ -86,6 +93,7 @@
                     + Nueva categoría
                 </button>
             </div>
+            <!-- Formulario compartido para crear y editar categorías. -->
             <form id="form-categoria" class="border rounded p-3 mb-4 d-none">
                 <div class="mb-3">
                     <label for="nombre-categoria" class="form-label">
@@ -103,6 +111,7 @@
                     Guardar categoría
                 </button>
             </form>
+            <!-- Indicador de carga o error de las categorías. -->
             <p id="mensaje-categorias">Cargando categorías...</p>
 
             <div class="table-responsive">
@@ -115,11 +124,13 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
+                    <!-- admin.js inserta filas de categoría y enlaza sus botones de acción. -->
                     <tbody id="tabla-categorias"></tbody>
                 </table>
             </div>
         </section>
     </main>
+    <!-- Lógica que conecta los formularios y tablas con la API. -->
     <script src="js/admin.js"></script>
 </body>
 

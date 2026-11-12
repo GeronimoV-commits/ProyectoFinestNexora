@@ -1,7 +1,9 @@
+-- Crea la base si todavía no existe y la selecciona para las instrucciones siguientes.
 CREATE DATABASE IF NOT EXISTS proyecto2;
 
 USE proyecto2;
 
+-- Categorías que se pueden asociar a productos; estado permite desactivarlas sin borrarlas.
 CREATE TABLE categorias (
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	nombre VARCHAR(50) NOT NULL,
@@ -9,6 +11,7 @@ CREATE TABLE categorias (
 	estado BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+-- Catálogo de productos. categoria referencia la tabla categorias.
 CREATE TABLE productos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	nombre VARCHAR(50) NOT NULL,
@@ -21,6 +24,7 @@ CREATE TABLE productos (
 	FOREIGN KEY (categoria) REFERENCES categorias(id)
 );
 
+-- Cuentas del sistema; el correo es único y la contraseña almacena un hash.
 CREATE TABLE usuarios (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL,
@@ -33,6 +37,7 @@ CREATE TABLE usuarios (
     estado BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+-- Cuentas de prueba para iniciar sesión como administrador y como usuario común.
 INSERT INTO usuarios (nombre, apellido, email, password, tipo_usuario, estado) VALUES
     ('Admin', 'Nexora', 'admin@nexora.com', '$2b$10$eAjdDfrOh23KjHv2E0hsYeqak14muqKhVANGFHDjz4yJk6Vc9f.vm', 'admin', TRUE),
     ('Usuario', 'Demo', 'usuario@nexora.com', '$2b$10$./kF96i5Ce0RgI4ZBp8mhOw8NJzVunbtlvZy9Q/j.UdvWW.PgF0Sm', 'user', TRUE);
