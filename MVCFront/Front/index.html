@@ -1,49 +1,67 @@
+<!-- Indica al navegador que este documento utiliza HTML5. -->
 <!DOCTYPE html>
+<!-- El atributo lang ayuda a lectores de pantalla y motores de búsqueda a identificar el idioma. -->
 <html lang="es">
 
 <head>
-    <!-- Metadatos de idioma, codificación y diseño adaptable a móviles. -->
+    <!-- Define la codificación para que se muestren correctamente letras y acentos. -->
     <meta charset="UTF-8">
+    <!-- Hace que el diseño se adapte al ancho de celulares, tabletas y computadoras. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Carga Bootstrap desde un CDN para usar su sistema de grillas y componentes visuales. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Carga los estilos propios del proyecto, que pueden complementar Bootstrap. -->
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Texto que aparece en la pestaña del navegador. -->
     <title>Nexora</title>
 
 </head>
 <header>
-    <!-- Barra de navegación con enlaces a secciones y acciones de sesión. -->
+    <!-- Barra superior de navegación; las clases navbar-* pertenecen a Bootstrap. -->
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
         <div class="container">
+            <!-- Logo/nombre de la tienda; al hacer clic vuelve a la página principal. -->
             <a class="navbar-brand" href="index.html">Nexora</a>
 
+            <!-- En pantallas pequeñas, este botón despliega u oculta el menú. -->
+            <!-- data-bs-target debe coincidir con el id del menú que aparece debajo. -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <!-- Bootstrap contrae este bloque en pantallas pequeñas. -->
             <div class="collapse navbar-collapse" id="menuPrincipal">
+                <!-- Agrupa los enlaces; ms-auto los alinea hacia la derecha. -->
                 <div class="navbar-nav ms-auto">
+                    <!-- Enlace a la página de inicio. -->
                     <a class="nav-link" href="index.html" id="enlace-inicio">
                         Inicio
                     </a>
+                    <!-- El fragmento #catalogo desplaza hasta la sección de productos. -->
                     <a class="nav-link" href="#catalogo" id="enlace-productos">
                         Productos
                     </a>
+                    <!-- Enlace a las páginas de autenticación. -->
                     <a class="nav-link" href="login.html" id="enlace-login">
                         Iniciar sesión
                     </a>
                     <a class="nav-link" href="registro.html" id="enlace-registro">
                         Registrarse
                     </a>
+                    <!-- d-none lo oculta inicialmente; main.js lo muestra a los administradores. -->
                     <a class="nav-link d-none" href="admin.html" id="enlace-admin">
                         Administración
                     </a>
+                    <!-- También empieza oculto y main.js lo muestra cuando existe una sesión. -->
                     <button class="btn btn-outline-light d-none" id="boton-cerrar-sesion">
                         Cerrar sesión
                 </div>
+                <!-- Abre el panel lateral del carrito usando el componente Offcanvas de Bootstrap. -->
                 <button class="btn btn-outline-light ms-2" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasCarrito">
                     Carrito
+                    <!-- main.js actualiza este contador cuando cambia la cantidad del carrito. -->
                     <span class="badge bg-danger" id="contador-carrito">
                         0
                     </span>
@@ -58,16 +76,20 @@
 </header>
 
 <body class="d-flex flex-column min-vh-100">
+    <!-- d-flex y min-vh-100 permiten que el pie de página quede abajo si hay poco contenido. -->
     <!-- Sección de bienvenida con un enlace de desplazamiento al catálogo. -->
     <section id="inicio" class="py-5 bg-light">
         <div class="container text-center">
 
+            <!-- Título principal visible al entrar a la tienda. -->
             <h1>Bienvenidos a Mi Tienda</h1>
 
+            <!-- Texto breve que describe la página. -->
             <p class="lead">
                 Encuentra nuestros productos disponibles.
             </p>
 
+            <!-- Lleva al usuario a la sección cuyo id es catalogo. -->
             <a href="#catalogo" class="btn btn-primary">
                 Ver productos
             </a>
@@ -76,17 +98,21 @@
 
     </section>
 
-    <!-- Contenedor que main.js llena con tarjetas de productos desde la API. -->
+    <!-- Sección de catálogo: main.js obtiene los productos y los dibuja dentro de lista-productos. -->
     <section id="catalogo" class="container py-5">
 
+        <!-- Encabezado de la sección de catálogo. -->
         <h2 class="text-center mb-4">
             Nuestros productos
         </h2>
+        <!-- Fila Bootstrap para mantener los controles en columnas adaptables. -->
         <div class="row g-3 mb-4">
             <div class="col-12 col-md-8">
+                <!-- for vincula la etiqueta con el input que tiene el mismo id. -->
                 <label for="buscador-productos" class="form-label fw-semibold">
                     Buscar productos
                 </label>
+                <!-- main.js escucha cambios en este campo para filtrar por nombre o descripción. -->
                 <input type="text" id="buscador-productos" class="form-control" placeholder="Buscar por nombre...">
             </div>
             <div class="col-12 col-md-4">
@@ -94,18 +120,23 @@
                     Categoría
                 </label>
 
+                <!-- main.js agrega las categorías disponibles como opciones de este selector. -->
                 <select id="filtro-categoria" class="form-select">
+                    <!-- Valor vacío significa que no se aplica un filtro de categoría. -->
                     <option value="">
                         Todas las categorías
                     </option>
                 </select>
             </div>
+            <!-- main.js reemplaza este texto por mensajes de carga, error o resultados. -->
             <p id="mensaje-catalogo">
                 Cargando productos...
             </p>
+            <!-- Restablece el buscador y el selector para volver a ver todos los productos. -->
             <button class="btn btn-outline-secondary" id="boton-limpiar-filtros">
                 Limpiar filtros
             </button>
+            <!-- Contenedor vacío que main.js completa con una tarjeta por producto. -->
             <div id="lista-productos" class="row g-4">
 
             </div>
@@ -118,37 +149,44 @@
             <p class="mb-0">Mi Tienda - 2026</p>
         </div>
     </footer>
+    <!-- Panel lateral del carrito; Bootstrap lo abre desde el botón de navegación. -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCarrito">
         <div class="offcanvas-header">
+            <!-- Título del panel. -->
             <h2 class="offcanvas-title h5">
                 Carrito de compras
             </h2>
+            <!-- data-bs-dismiss cierra el panel sin necesitar código JavaScript propio. -->
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas">
             </button>
         </div>
         <div class="offcanvas-body">
+            <!-- main.js dibuja aquí los artículos, cantidades y controles de cada producto. -->
             <div id="lista-carrito">
+                <!-- Contenido inicial mientras el carrito está vacío. -->
                 <p class="text-muted">
                     Tu carrito está vacío.
                 </p>
             </div>
             <hr>
+            <!-- main.js actualiza estos valores cada vez que cambia el carrito. -->
             <p class="fw-bold">
                 Productos: <span id="cantidad-carrito">0</span>
             </p>
             <p class="fs-5 fw-bold">
                 Total: $<span id="total-carrito">0</span>
             </p>
+            <!-- Vacía el carrito; main.js escucha el clic de este botón. -->
             <button class="btn btn-outline-danger w-100" id="boton-vaciar-carrito">
                 Vaciar carrito
             </button>
         </div>
     </div>
 
-    <!-- Bootstrap habilita componentes visuales y su comportamiento responsivo. -->
+    <!-- El bundle de Bootstrap incluye JavaScript necesario para el menú y el panel lateral. -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Lógica del catálogo, navegación de sesión y carga de productos. -->
+    <!-- Debe cargarse después del HTML para que sus elementos ya existan en el DOM. -->
     <script src="js/main.js"></script>
 
 </body>
