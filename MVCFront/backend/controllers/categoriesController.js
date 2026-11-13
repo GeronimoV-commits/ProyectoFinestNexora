@@ -84,7 +84,7 @@ const actualizarCategoria = async (req, res) => {
         const categoriaActualizada = await categoriesModel.actualizarCategoria(id, { nombre, descripcion });
         res.status(200).json({
             mensaje: 'Categoria actualizada correctamente',
-            categoria: categoriaActualizada
+    
         });
     } catch (error) {
         console.error('Error al actualizar categoria:', error);

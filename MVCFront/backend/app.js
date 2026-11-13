@@ -19,13 +19,9 @@ app.use(logger);
 // Habilita solicitudes del navegador desde el frontend.
 app.use(cors());
 
-// Publica las imágenes guardadas en uploads mediante una URL HTTP.
-app.use('/uploads', express.static('uploads'));
-
-
 // Endpoint sencillo para comprobar que el servidor está activo.
 app.get("/", (req, res)=>{
-    res.send("API Backend II");
+    res.send("Se pueden consultar los endpoints de la API en /productos, /usuarios, /categorias y /login");
 });
 
 // Asocia cada prefijo de URL con su conjunto de rutas.

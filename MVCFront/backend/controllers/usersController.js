@@ -55,7 +55,7 @@ const listarUsuarioPorId = async (req, res) => {
 const crearUsuario = async (req, res) => {
     try {
         // Los datos del formulario se reciben en el cuerpo de la solicitud.
-        const { nombre, apellido, contacto, email, password, tipo_usuario } = req.body;
+        const { nombre, apellido, contacto, email, password } = req.body;
 
         // Campos esenciales para que la cuenta pueda identificarse y autenticarse.
         if (!nombre || !apellido || !email || !password) {
@@ -68,8 +68,6 @@ const crearUsuario = async (req, res) => {
             return res.status(409).json({ error: 'Ya existe un usuario con ese email' });
         }
 
-        // Guarda el nombre de archivo y nunca la contraseña en texto plano.
-        const imagen = req.file ? req.file.filename : null;
         const passwordHash = await bcrypt.hash(password, 10);
         // El modelo inserta la cuenta y devuelve su nuevo identificador.
         const id = await usersModel.crearUsuario(
@@ -78,8 +76,7 @@ const crearUsuario = async (req, res) => {
             contacto || null,
             email,
             passwordHash,
-            imagen,
-            tipo_usuario,
+            undefined,
             1
         );
 
@@ -95,7 +92,7 @@ const crearUsuario = async (req, res) => {
     }
 };
 
-// Actualiza los datos de un usuario; contraseña e imagen son opcionales.
+// Actualiza los datos de un usuario; la contraseña es opcional.
 const modificarUsuario = async (req, res) => {
     try {
         // Valida el ID y lee los campos enviados para actualizar.
@@ -106,30 +103,45 @@ const modificarUsuario = async (req, res) => {
             return res.status(400).json({ error: 'ID de usuario inválido' });
         }
 
-        if (!nombre || !apellido || !contacto || !email) {
-            return res.status(400).json({ error: 'Nombre, Apellido, Contacto y Email son campos obligatorios' });
-        }
-
-        // Se obtiene el registro actual para validar existencia y conservar la imagen.
+        // Se obtiene el registro actual para validar existencia y conservar los valores no enviados.
         const usuarioExistente = await usersModel.obtenerUsuarioPorId(id);
 
         if (!usuarioExistente) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
+        const nombreFinal = nombre ?? usuarioExistente.nombre;
+        const apellidoFinal = apellido ?? usuarioExistente.apellido;
+        const contactoFinal = contacto ?? usuarioExistente.contacto;
+        const emailFinal = email ?? usuarioExistente.email;
+        const tipoUsuarioFinal = tipo_usuario ?? usuarioExistente.tipo_usuario;
+
+        if (!nombreFinal || !apellidoFinal || !emailFinal) {
+            return res.status(400).json({ error: 'Nombre, Apellido y Email son campos obligatorios' });
+        }
+        if (!['admin', 'user'].includes(tipoUsuarioFinal)) {
+            return res.status(400).json({ error: 'Tipo de usuario inválido' });
+        }
+
         // El correo puede pertenecer al mismo usuario, pero no a otra cuenta.
-        const usuarioConEmail = await usersModel.obtenerUsuarioPorEmail(email);
+        const usuarioConEmail = await usersModel.obtenerUsuarioPorEmail(emailFinal);
         if (usuarioConEmail && usuarioConEmail.id !== id) {
             return res.status(409).json({ error: 'Ya existe un usuario con ese email' });
         }
 
-        // Si no se envía reemplazo, se conserva la imagen actual.
-        const imagenFinal = req.file ? req.file.filename : usuarioExistente.imagen;
         // Se calcula hash solo si se indicó una contraseña nueva.
         const passwordHash = password ? await bcrypt.hash(password, 10) : null;
 
         // COALESCE en el modelo conserva la contraseña actual cuando passwordHash es null.
-        await usersModel.actualizarUsuario(id, nombre, apellido, contacto, email, passwordHash, imagenFinal, tipo_usuario);
+        await usersModel.actualizarUsuario(
+            id,
+            nombreFinal,
+            apellidoFinal,
+            contactoFinal,
+            emailFinal,
+            passwordHash,
+            tipoUsuarioFinal
+        );
 
         // Consulta otra vez para responder con los datos vigentes (sin la contraseña).
         const usuarioActualizado = await usersModel.obtenerUsuarioPorId(id);

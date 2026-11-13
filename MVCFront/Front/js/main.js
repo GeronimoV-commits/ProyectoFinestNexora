@@ -4,17 +4,12 @@ const contenedorProductos = document.getElementById("lista-productos");
 const mensajeCatalogo = document.getElementById("mensaje-catalogo");
 
 // La sesión y el rol permiten presentar enlaces acordes al usuario conectado.
-const token =
-    sessionStorage.getItem("token");
-const rol =
-    sessionStorage.getItem("rol");
+const token = sessionStorage.getItem("token");
+const rol = sessionStorage.getItem("rol");
 // Elementos de navegación que se muestran u ocultan según el estado de sesión.
-const enlaceLogin =
-    document.getElementById("enlace-login");
-const enlaceAdmin =
-    document.getElementById("enlace-admin");
-const botonCerrarSesion =
-    document.getElementById("boton-cerrar-sesion");
+const enlaceLogin = document.getElementById("enlace-login");
+const enlaceAdmin = document.getElementById("enlace-admin");
+const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 
 // Si hay token, muestra cerrar sesión y oculta el enlace de acceso.
 if (token) {
@@ -97,11 +92,7 @@ function obtenerNombreCategoria(idCategoria, categorias) {
 // Construye una tarjeta de catálogo para un producto y la devuelve lista para insertar.
 function crearTarjetaProducto(producto, categorias) {
 
-    // Las imágenes subidas se sirven desde /uploads; si falta imagen, se muestra un reemplazo.
     const nombreCategoria = obtenerNombreCategoria(producto.categoria, categorias);
-    const imagen = producto.imagen
-        ? `${URL_API}/uploads/${encodeURIComponent(producto.imagen)}`
-        : `https://placehold.co/600x400?text=${encodeURIComponent(producto.nombre)}`;
 
     // Bootstrap organiza cada tarjeta dentro de una columna responsiva.
     const columna = document.createElement('div');
@@ -110,10 +101,6 @@ function crearTarjetaProducto(producto, categorias) {
     // La plantilla coloca los datos del producto en la tarjeta.
     columna.innerHTML = `
                 <div class="card h-100 producto-card">
-
-                    <img src="${imagen}"
-                    class="card-img-top imagen-producto"
-                    alt="${producto.nombre}">
 
                     <div class="card-body d-flex flex-column">
                         <h3 class="card-title h5">${producto.nombre}</h3>
@@ -136,7 +123,7 @@ function mostrarProductos(productos, categorias) {
         // Muestra un texto alternativo cuando la descripción está vacía o es null.
         if (producto.descripcion === null || producto.descripcion.trim() === "") {
             producto.descripcion = "Sin descripción";
-        }   
+        }
         const tarjeta = crearTarjetaProducto(producto, categorias);
         contenedorProductos.append(tarjeta);
     });
@@ -146,10 +133,8 @@ function mostrarProductos(productos, categorias) {
 async function cargarCatalogo() {
     try {
         // El catálogo requiere ambos listados para mostrar el nombre de la categoría.
-        const productos =
-            await obtenerProductos();
-        const categorias =
-            await obtenerCategorias();
+        const productos = await obtenerProductos();
+        const categorias = await obtenerCategorias();
         // Evita mostrar una cuadrícula vacía sin explicación.
         if (productos.length === 0) {
             mensajeCatalogo.textContent =

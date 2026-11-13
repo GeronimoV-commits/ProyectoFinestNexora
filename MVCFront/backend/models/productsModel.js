@@ -4,7 +4,7 @@ const db = require("../config/database");
 // Devuelve productos activos para el catálogo y el panel administrativo.
 const obtenerTodos = async () => {
     const [productos] = await db.query(
-        `SELECT *
+        `SELECT id, nombre, descripcion, precio, stock, categoria, estado
         FROM productos
         WHERE estado = TRUE`
     );
@@ -14,7 +14,7 @@ const obtenerTodos = async () => {
 // Busca un producto activo por ID; devuelve undefined si no existe.
 const obtenerPorId = async (id) => {
     const [productos] = await db.execute(
-        `SELECT *
+        `SELECT id, nombre, descripcion, precio, stock, categoria, estado
         FROM productos
         WHERE id = ? AND estado = TRUE`,
         [id]
@@ -27,16 +27,16 @@ const obtenerPorId = async (id) => {
 const crearProducto = async (producto) => {
 
     // Separa las propiedades para pasarlas como parámetros de la consulta SQL.
-    const { nombre, descripcion = null, precio, stock, imagen, categoria } = producto;
+    const { nombre, descripcion = null, precio, stock, categoria } = producto;
 
     // Los signos ? son parámetros preparados: protegen valores y evitan concatenar SQL.
     const [resultado] = await db.execute(
 
         `INSERT INTO productos
-        (nombre, descripcion, precio, stock, imagen, categoria)
-        VALUES (?, ?, ?, ?, ?, ?)`,
+        (nombre, descripcion, precio, stock, categoria)
+        VALUES (?, ?, ?, ?, ?)`,
 
-        [nombre, descripcion, precio, stock, imagen, categoria]
+        [nombre, descripcion, precio, stock, categoria]
 
     );
 
@@ -48,7 +48,6 @@ const crearProducto = async (producto) => {
         descripcion,
         precio,
         stock,
-        imagen,
         categoria
     };
 
@@ -56,11 +55,11 @@ const crearProducto = async (producto) => {
 
 // Actualiza los campos de un producto existente y comunica si se afectó una fila.
 const actualizarProducto = async (id, producto) => {
-    const { nombre, descripcion, precio, stock, imagen, categoria } = producto;
+    const { nombre, descripcion, precio, stock, categoria } = producto;
     const [resultado] = await db.execute(
         `UPDATE productos
-        SET nombre = ?, descripcion = ?, precio =?, stock =?, imagen = ?, categoria = ?
-        WHERE id = ?`, [nombre, descripcion, precio, stock, imagen, categoria, id]
+        SET nombre = ?, descripcion = ?, precio = ?, stock = ?, categoria = ?
+        WHERE id = ?`, [nombre, descripcion, precio, stock, categoria, id]
     );
     return resultado.affectedRows > 0;
 

@@ -45,18 +45,24 @@ const obtenerProductoPorId = async (req, res) => {
     }
 };
 
-// POST /productos: guarda los campos y, si existe, la imagen enviada por Multer.
+// POST /productos: guarda los campos del producto.
 const crearProducto = async (req, res) => {
 
     try {
 
         // Los campos de texto/número llegan en req.body.
         const { nombre, descripcion, precio, stock, categoria } = req.body;
+        if (!nombre || !precio || !stock) {
+            return res.status(400).json({
+                mensaje: "Nombre, precio y stock son campos obligatorios"
+            });
+        }
+        if (isNaN(precio) || isNaN(stock)) {
+            return res.status(400).json({
+                mensaje: "Precio y stock deben ser números"
+            });
+        }
 
-        // Multer agrega req.file cuando se subió una imagen.
-        const imagen = req.file
-            ? req.file.filename
-            : null;
         // Normaliza los valores antes de entregarlos al modelo.
         const nuevoProducto = await productsModel.crearProducto({
 
@@ -64,7 +70,6 @@ const crearProducto = async (req, res) => {
             descripcion: descripcion ?? null,
             precio: Number(precio),
             stock: Number(stock),
-            imagen,
             categoria: categoria ? Number(categoria) : null
 
         });
@@ -119,13 +124,11 @@ const actualizarProducto = async (req, res) => {
             descripcionFinal = null;
         }
 
-        // Si no se subió una nueva imagen, conserva la ruta de la anterior.
         await productsModel.actualizarProducto(id, {
             nombre,
             descripcion: descripcionFinal,
             precio: Number(precio),
             stock: Number(stock),
-            imagen: req.file ? req.file.filename : productoActual.imagen,
             categoria: categoria ? Number(categoria) : null
         });
 

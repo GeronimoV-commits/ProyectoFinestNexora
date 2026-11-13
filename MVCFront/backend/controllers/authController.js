@@ -21,6 +21,10 @@ const login = async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
+        if (!usuario.estado) {
+            return res.status(403).json({ error: 'La cuenta está desactivada' });
+        }
+
         // Compara la contraseña escrita con el hash guardado sin descifrarlo.
         const passwordValido = await bcrypt.compare(password, usuario.password);
 
