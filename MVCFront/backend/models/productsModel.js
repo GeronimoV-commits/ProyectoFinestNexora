@@ -4,7 +4,7 @@ const db = require("../config/database");
 // Devuelve productos activos para el catálogo y el panel administrativo.
 const obtenerTodos = async () => {
     const [productos] = await db.query(
-        `SELECT id, nombre, descripcion, precio, stock, categoria, estado
+        `SELECT id, nombre, descripcion, precio, stock, imagen, categoria, estado
         FROM productos
         WHERE estado = TRUE`
     );
@@ -14,7 +14,7 @@ const obtenerTodos = async () => {
 // Busca un producto activo por ID; devuelve undefined si no existe.
 const obtenerPorId = async (id) => {
     const [productos] = await db.execute(
-        `SELECT id, nombre, descripcion, precio, stock, categoria, estado
+        `SELECT id, nombre, descripcion, precio, stock, imagen, categoria, estado
         FROM productos
         WHERE id = ? AND estado = TRUE`,
         [id]

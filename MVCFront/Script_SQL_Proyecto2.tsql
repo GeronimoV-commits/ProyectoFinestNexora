@@ -18,6 +18,7 @@ CREATE TABLE productos (
 	descripcion TEXT,
 	precio DECIMAL(10,2) NOT NULL,
 	stock INT NOT NULL DEFAULT 0,
+	imagen VARCHAR(255),
 	categoria INT,
 	estado BOOLEAN NOT NULL DEFAULT TRUE,
 	FOREIGN KEY (categoria) REFERENCES categorias(id)
