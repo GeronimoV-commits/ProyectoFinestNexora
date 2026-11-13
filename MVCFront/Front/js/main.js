@@ -8,6 +8,7 @@ const token = sessionStorage.getItem("token");
 const rol = sessionStorage.getItem("rol");
 // Elementos de navegación que se muestran u ocultan según el estado de sesión.
 const enlaceLogin = document.getElementById("enlace-login");
+const enlaceRegistro = document.getElementById("enlace-registro");
 const enlaceAdmin = document.getElementById("enlace-admin");
 const botonCerrarSesion = document.getElementById("boton-cerrar-sesion");
 const buscadorProductos = document.getElementById("buscador-productos");
@@ -27,6 +28,9 @@ let categoriasCargadas = [];
 // Si hay token, muestra cerrar sesión y oculta el enlace de acceso.
 if (token) {
     enlaceLogin.classList.add(
+        "d-none"
+    );
+    enlaceRegistro.classList.add(
         "d-none"
     );
     botonCerrarSesion.classList.remove(

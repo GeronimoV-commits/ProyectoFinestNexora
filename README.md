@@ -10,7 +10,7 @@ Tienda web realizada por alumnos de FINEST:
 
 Necesitás tener instalados **Node.js**, **MySQL** y la extensión **Live Server** en Visual Studio Code.
 
-1. Iniciá MySQL y ejecutá en MySQL Workbench el archivo [`MVCFront/Script_SQL_Proyecto2.tsql`](MVCFront/Script_SQL_Proyecto2.tsql).
+1. Iniciá MySQL y ejecutá en MySQL Workbench el archivo [`MVCFront/Script_SQL_Proyecto2.tsql`](MVCFront/Script_SQL_Proyecto2.sql).
 2. Abrí una terminal en la carpeta del proyecto e iniciá el backend:
 
    ```powershell
